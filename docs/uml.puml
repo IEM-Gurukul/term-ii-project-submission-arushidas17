@@ -1,0 +1,92 @@
+```plantuml
+@startuml
+
+class InvalidQuestionException {
+    +InvalidQuestionException(message: String)
+}
+
+class InvalidAnswerException {
+    +InvalidAnswerException(message: String)
+}
+
+InvalidQuestionException --|> RuntimeException
+InvalidAnswerException --|> Exception
+
+
+abstract class Question {
+    -questionText: String
+    -marks: int
+
+    +Question(questionText: String, marks: int)
+    +getQuestionText(): String
+    +getMarks(): int
+
+    +display(): void
+    +checkAnswer(userAnswer: String): boolean
+    +getCorrectAnswer(): String
+}
+
+
+class MCQQuestion {
+    -options: List<String>
+    -correctOptionIndex: int
+
+    +MCQQuestion(text: String, options: List<String>, correctOptionIndex: int, marks: int)
+    +display(): void
+    +checkAnswer(userAnswer: String): boolean
+    +getCorrectAnswer(): String
+
+    +getOptions(): List<String>
+    +getCorrectOptionIndex(): int
+}
+
+class TrueFalseQuestion {
+    -correctAnswer: boolean
+
+    +TrueFalseQuestion(text: String, correctAnswer: boolean, marks: int)
+    +display(): void
+    +checkAnswer(userAnswer: String): boolean
+    +getCorrectAnswer(): String
+}
+
+MCQQuestion --|> Question
+TrueFalseQuestion --|> Question
+
+
+class QuestionFactory {
+    +createMCQ(text: String, options: List<String>, correctOptionIndex: int, marks: int): Question
+    +createTrueFalse(text: String, correctAnswer: boolean, marks: int): Question
+}
+
+QuestionFactory ..> MCQQuestion
+QuestionFactory ..> TrueFalseQuestion
+
+
+class QuizEngine {
+    -questions: ArrayList<Question>
+    -quizTitle: String
+    -score: int
+    -totalMarks: int
+
+    +QuizEngine(quizTitle: String)
+    +addQuestion(q: Question): void
+    +startQuiz(): void
+
+    -validateAnswer(answer: String, q: Question): void
+    -displayResult(): void
+    -getGrade(percent: double): String
+    -printBanner(text: String): void
+    -printDivider(): void
+}
+
+QuizEngine --> Question
+
+
+class QuizEngineApp {
+    +main(args: String[]): void
+}
+
+QuizEngineApp --> QuizEngine
+QuizEngineApp --> QuestionFactory
+
+@enduml
